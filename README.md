@@ -15,6 +15,8 @@
 - **Flutter** — Front-end mobile
 - **Firebase** — Autenticação e banco de dados em tempo real
 - **Figma** — Design das telas e prototipagem
+- **Trello** - Organização do projeto
+- **GitHub Copilot**: Usado para otimizar o desenvolvimento de código, ajudando com sugestões de implementações.
   
 ---
 
