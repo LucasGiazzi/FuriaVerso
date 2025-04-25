@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'register.dart';
+import 'password_recovery/forgot_pass.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,18 +32,19 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 60),
+              const SizedBox(height: 45),
 
               // titulo
               Text(
                 'FuriaVerso',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.openSans(
-                  fontSize: 32,
+                  fontSize: 42,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
+              const SizedBox(height: 15),
 
               // Logo Furia
               Image.asset(
@@ -49,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 150,
                 fit: BoxFit.contain,
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
 
               // Email
               TextFormField(
@@ -115,7 +118,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // navegar para a tela de recuperação de senha
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordScreen(),
+                      ),
+                    );
                   },
                   child: const Text(
                     'Esqueceu a senha?',
@@ -149,26 +157,30 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 15),
 
               // Link para cadastro
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Ainda não é um Furioso?',
+                    'Ainda não é um Furioso? ',
                     style: TextStyle(color: Colors.white),
                   ),
-                  const SizedBox(width: 4),
                   TextButton(
                     onPressed: () {
-                      // Navegar para tela de cadastro
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterScreen(),
+                        ),
+                      );
                     },
                     child: const Text(
-                      'Registre-se!',
+                      'Cadastre-se!',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
