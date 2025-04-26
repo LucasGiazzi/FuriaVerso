@@ -1,7 +1,6 @@
 # 🐾 FuriaVerso
 
-**FuriaVerso** é a rede social oficial dos fãs da **FURIA Esports**!
-O **FuriaVerso** conecta fãs da FURIA em um só lugar.  
+**FuriaVerso** é a rede social oficial dos fãs da **FURIA Esports** conectando-os em um só lugar.  
 
 ---
 
