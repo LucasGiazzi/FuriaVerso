@@ -1,16 +1,30 @@
-# furiaverso_aplicativo
+# 🐾 FuriaVerso
 
-A new Flutter project.
+**FuriaVerso** é a rede social oficial dos fãs da **FURIA Esports**!
+O **FuriaVerso** conecta fãs da FURIA em um só lugar.  
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📱 Funcionalidades
 
-A few resources to get you started if this is your first Flutter project:
+- 🔐 **Autenticação segura** com Firebase Auth  
+- 🧑‍💻 **Cadastro e perfil do usuário** 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🎨 Layout
+
+O design do aplicativo foi criado no [Figma](https://www.figma.com/design/NXyfllxwmy4NVUVpM5qyTq/Telas---FuriaVerso?node-id=0-1&t=aoNJBRYfRet90szy-1) com base na identidade da FURIA. 
+
+---
+
+## ⚙️ Tecnologias
+
+| Tecnologia | Função |
+|------------|--------|
+| [Flutter](https://flutter.dev) | Framework para desenvolvimento mobile |
+| [Firebase](https://firebase.google.com) | Backend (Auth, Firestore, Realtime DB, Storage) |
+| [Figma](https://figma.com) | Criação das telas e prototipação |
+| [Trello](https://trello.com) | Organização do Projeto |
+
+
