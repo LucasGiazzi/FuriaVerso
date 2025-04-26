@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart'; // Import do provider
+import 'auth_service.dart'; // Import do AuthService
 import 'register.dart';
 import 'password_recovery/forgot_pass.dart';
+import 'home_screen.dart'; // Import da HomeScreen
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,6 +27,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(
+      context,
+    ); // Acessa o AuthService
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -34,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 45),
 
-              // titulo
+              // Título
               Text(
                 'FuriaVerso',
                 textAlign: TextAlign.center,
@@ -54,20 +61,20 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 30),
 
-              // Email
+              // Campo de Email
               TextFormField(
                 controller: _emailController,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Email',
                   labelStyle: const TextStyle(color: Colors.white),
-                  border: OutlineInputBorder(
+                  border: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
                   prefixIcon: const Icon(Icons.email, color: Colors.white),
@@ -77,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Senha
+              // Campo de Senha
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -85,13 +92,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: InputDecoration(
                   labelText: 'Senha',
                   labelStyle: const TextStyle(color: Colors.white),
-                  border: OutlineInputBorder(
+                  border: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                   ),
                   prefixIcon: const Icon(Icons.lock, color: Colors.white),
@@ -138,8 +145,37 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Botão de Entrar
               ElevatedButton(
-                onPressed: () {
-                  // fazer logica de login
+                onPressed: () async {
+                  try {
+                    await authService.login(
+                      _emailController.text.trim(),
+                      _passwordController.text.trim(),
+                    );
+
+                    // Exibe mensagem de sucesso
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Login realizado com sucesso!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+
+                    // Redireciona para a HomePage
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(),
+                      ),
+                    );
+                  } catch (e) {
+                    // Exibe mensagem de erro
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
