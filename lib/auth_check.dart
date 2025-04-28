@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'auth_service.dart';
 import 'login.dart';
-import 'home_screen.dart'; // Substitua pela tela principal do seu app
+import 'home_screen.dart';
 
 class AuthCheck extends StatelessWidget {
   const AuthCheck({super.key});

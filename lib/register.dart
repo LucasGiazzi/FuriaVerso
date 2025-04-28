@@ -16,7 +16,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
-  final _nameController = TextEditingController();
+  final _nicknameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -24,12 +24,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _nicknameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _cpfController.dispose();
     super.dispose();
+  }
+
+  Future<bool> _isNicknameUnique(String nickname) async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final querySnapshot =
+          await firestore
+              .collection('users')
+              .where('nickname', isEqualTo: nickname)
+              .limit(1)
+              .get();
+      return querySnapshot.docs.isEmpty;
+    } catch (e) {
+      print('Erro ao verificar unicidade do nickname: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _isCpfUnique(String cpf) async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final querySnapshot =
+          await firestore
+              .collection('users')
+              .where('cpf', isEqualTo: cpf)
+              .limit(1)
+              .get();
+      return querySnapshot.docs.isEmpty;
+    } catch (e) {
+      print('Erro ao verificar unicidade do CPF: $e');
+      return false;
+    }
   }
 
   @override
@@ -49,24 +81,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 const SizedBox(height: 60),
 
-                // Título
-                const Text(
-                  'Cadastro',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 38,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                // Logo e Título alinhados horizontalmente
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Cadastro',
+                      style: TextStyle(
+                        fontSize: 38,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Image.asset(
+                      'assets/images/tiger_footprint.png',
+                      height: 60,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 40),
 
-                // Campo de Nome
+                // Campo de Nickname
                 TextFormField(
-                  controller: _nameController,
+                  controller: _nicknameController,
                   style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
                   decoration: const InputDecoration(
-                    labelText: 'Nome',
+                    labelText: 'Nickname',
                     labelStyle: TextStyle(color: Colors.white),
                     border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
@@ -80,7 +123,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, insira seu nome';
+                      return 'Por favor, insira seu nickname';
                     }
                     return null;
                   },
@@ -91,6 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _emailController,
                   style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
                   decoration: const InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(color: Colors.white),
@@ -123,6 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _cpfController,
                   style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
                   decoration: const InputDecoration(
                     labelText: 'CPF',
                     labelStyle: TextStyle(color: Colors.white),
@@ -139,15 +184,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(11), // Limita a 11 números
-                    _CpfInputFormatter(), // Formata o CPF automaticamente
+                    LengthLimitingTextInputFormatter(11),
+                    _CpfInputFormatter(),
                   ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira seu CPF';
                     }
                     if (value.length != 14) {
-                      // 14 caracteres com pontos e traço
                       return 'O CPF deve ter 11 dígitos';
                     }
                     return null;
@@ -160,6 +204,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
                   decoration: InputDecoration(
                     labelText: 'Senha',
                     labelStyle: const TextStyle(color: Colors.white),
@@ -203,6 +248,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _confirmPasswordController,
                   obscureText: _obscurePassword,
                   style: const TextStyle(color: Colors.white),
+                  cursorColor: Colors.white,
                   decoration: const InputDecoration(
                     labelText: 'Confirme sua senha',
                     labelStyle: TextStyle(color: Colors.white),
@@ -229,76 +275,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      final isNicknameUnique = await _isNicknameUnique(
+                        _nicknameController.text.trim(),
+                      );
+
+                      if (!isNicknameUnique) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('O nickname já está em uso.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      final isCpfUnique = await _isCpfUnique(
+                        _cpfController.text.trim(),
+                      );
+
+                      if (!isCpfUnique) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('O CPF já está cadastrado.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
                       try {
-                        // Registra o usuário no Firebase Authentication
                         await authService.register(
                           _emailController.text.trim(),
                           _passwordController.text.trim(),
                         );
 
-                        // Salva os dados adicionais no Firestore
-                        final userId = authService.usuario!.uid;
+                        final userId = authService.usuario?.uid;
+                        if (userId == null) {
+                          throw Exception('Erro ao obter o ID do usuário.');
+                        }
+
                         await firestore.collection('users').doc(userId).set({
-                          'name': _nameController.text.trim(),
+                          'nickname': _nicknameController.text.trim(),
                           'email': _emailController.text.trim(),
                           'cpf': _cpfController.text.trim(),
+                          'level': 1,
+                          'location': 'Mundo Furioso',
+                          'bio': 'Olá! Estou usando o FuriaVerso.',
+                          'profileImageUrl': 'assets/images/furico.png',
                         });
 
-                        // Exibe mensagem de sucesso
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Conta cadastrada com sucesso!'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Conta cadastrada com sucesso!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
 
-                        // Limpa os campos
-                        _nameController.clear();
-                        _emailController.clear();
-                        _passwordController.clear();
-                        _confirmPasswordController.clear();
-                        _cpfController.clear();
-
-                        // Redireciona para a tela de login
-                        if (mounted) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
-                            ),
-                          );
-                        }
-                      } on FirebaseAuthException catch (e) {
-                        // Tratamento de erros do Firebase Authentication
-                        String errorMessage;
-                        if (e.code == 'email-already-in-use') {
-                          errorMessage = 'O email já está em uso.';
-                        } else if (e.code == 'weak-password') {
-                          errorMessage = 'A senha é muito fraca.';
-                        } else {
-                          errorMessage = 'Ocorreu um erro. Tente novamente.';
-                        }
-
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(errorMessage),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
                       } catch (e) {
-                        // Tratamento de outros erros
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Erro: $e'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Erro: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                       }
                     }
                   },
