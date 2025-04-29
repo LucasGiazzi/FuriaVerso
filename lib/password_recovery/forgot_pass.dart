@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:furiaverso_aplicativo/login.dart';
-import 'package:furiaverso_aplicativo/password_recovery/email_conf.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -17,6 +17,41 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void dispose() {
     _emailController.dispose();
     super.dispose();
+  }
+
+  Future<void> _sendPasswordResetEmail(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Um e-mail de redefinição de senha foi enviado. Verifique sua caixa de entrada.',
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      if (e.code == 'user-not-found') {
+        errorMessage = 'Nenhuma conta encontrada com este e-mail.';
+      } else {
+        errorMessage = 'Erro ao enviar o e-mail de redefinição de senha.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro inesperado: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -63,8 +98,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       decoration: InputDecoration(
                         labelText: 'Informe seu email',
                         labelStyle: const TextStyle(color: Colors.white),
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white),
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
                         ),
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
@@ -92,15 +127,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      const EmailConfirmationScreen(), // Navegar para a tela de confirmação de email
-                              //APLICAR A LOGICA PARA MANDAR O EMAIL AQUI
-                            ),
-                          );
+                          _sendPasswordResetEmail(_emailController.text.trim());
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -128,13 +155,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) =>
-                            const LoginScreen(), // Volta para a tela de login
-                  ),
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
                 );
               },
             ),
