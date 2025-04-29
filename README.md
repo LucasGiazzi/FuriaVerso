@@ -5,8 +5,12 @@
 
 ## 📲 Funcionalidades
 
-- ✅ Tela de login e cadastro
-- 🔥 Visual moderno e inspirado no universo FURIA
+- 🔐 Autenticação de Usuário
+- 👤 Perfil do Usuário
+- 🛡️ Validações
+- 🧭 Navegação
+- 🔥 Integração com Firebase (Backend)
+- 🖼️ Interface do Usuário (Visual moderno e inspirado no universo FURIA)
 
 ---
 
