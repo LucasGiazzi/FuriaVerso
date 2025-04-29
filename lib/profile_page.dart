@@ -38,24 +38,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
       if (userDoc.exists) {
         final data = userDoc.data()!;
-        setState(() {
-          nickname = data['nickname'] ?? '';
-          level = data['level'] ?? 1;
-          location = data['location'] ?? '';
-          bio = data['bio'] ?? '';
-          profileImageUrl = data['profileImageUrl'] ?? '';
-        });
+        if (mounted) {
+          setState(() {
+            nickname = data['nickname'] ?? '';
+            level = data['level'] ?? 1;
+            location = data['location'] ?? '';
+            bio = data['bio'] ?? '';
+            profileImageUrl = data['profileImageUrl'] ?? '';
+          });
+        }
       } else {
         throw Exception('Dados do usuário não encontrados.');
       }
     } catch (e) {
       print('Erro ao carregar os dados do usuário: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao carregar os dados do usuário: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao carregar os dados do usuário: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

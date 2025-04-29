@@ -5,6 +5,7 @@ import 'auth_service.dart'; // Import do AuthService
 import 'register.dart';
 import 'password_recovery/forgot_pass.dart';
 import 'home_screen.dart'; // Import da HomeScreen
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -149,10 +150,31 @@ class _LoginScreenState extends State<LoginScreen> {
               ElevatedButton(
                 onPressed: () async {
                   try {
+                    // Realiza o login
                     await authService.login(
                       _emailController.text.trim(),
                       _passwordController.text.trim(),
                     );
+
+                    // Obtém o usuário atual
+                    final user = FirebaseAuth.instance.currentUser;
+
+                    // Verifica se o e-mail foi verificado
+                    if (user != null && !user.emailVerified) {
+                      // Exibe mensagem de erro
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Por favor, verifique seu e-mail antes de fazer login.',
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+
+                      // Encerra a sessão do usuário
+                      await FirebaseAuth.instance.signOut();
+                      return;
+                    }
 
                     // Exibe mensagem de sucesso
                     ScaffoldMessenger.of(context).showSnackBar(

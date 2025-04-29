@@ -64,6 +64,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  Future<void> _sendEmailVerification(User user) async {
+    try {
+      await user.sendEmailVerification();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'E-mail de verificação enviado. Verifique sua caixa de entrada.',
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print('Erro ao enviar e-mail de verificação: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao enviar e-mail de verificação: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
@@ -304,12 +326,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
 
                       try {
-                        await authService.register(
+                        final userCredential = await authService.register(
                           _emailController.text.trim(),
                           _passwordController.text.trim(),
                         );
 
-                        final userId = authService.usuario?.uid;
+                        final userId = userCredential.user?.uid;
                         if (userId == null) {
                           throw Exception('Erro ao obter o ID do usuário.');
                         }
@@ -323,6 +345,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           'bio': 'Olá! Estou usando o FuriaVerso.',
                           'profileImageUrl': 'assets/images/furico.png',
                         });
+
+                        // Envia o e-mail de verificação
+                        final user = userCredential.user;
+                        if (user != null && !user.emailVerified) {
+                          await _sendEmailVerification(user);
+                        }
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

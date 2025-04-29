@@ -29,9 +29,12 @@ class AuthService extends ChangeNotifier {
   }
 
   // Cadastro com email e senha
-  Future<void> register(String email, String senha) async {
+  Future register(String email, String senha) async {
     try {
-      await _auth.createUserWithEmailAndPassword(email: email, password: senha);
+      return await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: senha,
+      );
     } on FirebaseAuthException catch (e) {
       throw _handleAuthError(e);
     }
