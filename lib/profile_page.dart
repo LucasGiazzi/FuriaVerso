@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _updateProfile() async {
+  Future<void> _updateProfile(String selectedAvatar) async {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
@@ -73,6 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
       await _firestore.collection('users').doc(userId).update({
         'location': _locationController.text.trim(),
         'bio': _bioController.text.trim(),
+        'profileImageUrl': selectedAvatar, // Atualiza o avatar no Firestore
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         location = _locationController.text.trim();
         bio = _bioController.text.trim();
+        profileImageUrl = selectedAvatar; // Atualiza o avatar localmente
       });
     } catch (e) {
       print('Erro ao atualizar o perfil: $e');
@@ -101,6 +103,8 @@ class _ProfilePageState extends State<ProfilePage> {
     _locationController.text = location;
     _bioController.text = bio;
 
+    String selectedAvatar = profileImageUrl; // Armazena o avatar selecionado
+
     showDialog(
       context: context,
       builder: (context) {
@@ -114,6 +118,25 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Exibe o avatar selecionado
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.white,
+                  backgroundImage:
+                      selectedAvatar.isNotEmpty
+                          ? AssetImage(selectedAvatar)
+                          : null,
+                  child:
+                      selectedAvatar.isEmpty
+                          ? const Icon(
+                            Icons.person,
+                            size: 50,
+                            color: Colors.black,
+                          )
+                          : null,
+                ),
+                const SizedBox(height: 16),
+
                 // Campo para editar a localização
                 TextFormField(
                   controller: _locationController,
@@ -147,6 +170,70 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
+
+                // Escolha de Avatar
+                const Text(
+                  'Escolha seu Avatar',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedAvatar = 'assets/images/furico1.png';
+                        });
+                      },
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: const AssetImage(
+                          'assets/images/furico1.png',
+                        ),
+                        child:
+                            selectedAvatar == 'assets/images/furico1.png'
+                                ? const Icon(Icons.check, color: Colors.green)
+                                : null,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedAvatar = 'assets/images/furico2.png';
+                        });
+                      },
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: const AssetImage(
+                          'assets/images/furico2.png',
+                        ),
+                        child:
+                            selectedAvatar == 'assets/images/furico2.png'
+                                ? const Icon(Icons.check, color: Colors.green)
+                                : null,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedAvatar = 'assets/images/furico3.png';
+                        });
+                      },
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundImage: const AssetImage(
+                          'assets/images/furico3.png',
+                        ),
+                        child:
+                            selectedAvatar == 'assets/images/furico3.png'
+                                ? const Icon(Icons.check, color: Colors.green)
+                                : null,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -163,7 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
             TextButton(
               onPressed: () async {
                 Navigator.pop(context);
-                await _updateProfile();
+                await _updateProfile(selectedAvatar);
               },
               child: const Text(
                 'Salvar',
@@ -180,7 +267,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil'),
         backgroundColor: Colors.black,
         actions: [
           TextButton(

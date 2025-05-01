@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart'; // Import do provider
-import 'auth_service.dart'; // Import do AuthService
+import 'package:provider/provider.dart';
+import 'auth_service.dart';
 import 'register.dart';
 import 'password_recovery/forgot_pass.dart';
-import 'home_screen.dart'; // Import da HomeScreen
+import 'home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 45),
+              const SizedBox(height: 65),
 
               // Título
               Text(
