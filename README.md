@@ -99,6 +99,26 @@ O design do aplicativo foi criado no Figma, com foco em simplicidade e usabilida
 
 ---
 
+## 📝 Instruções de Uso
+
+1. **Login ou Registro**  
+   - Ao abrir o aplicativo, você será direcionado para a tela de login.  
+   - Caso não tenha uma conta, clique em "Registrar" e preencha os campos obrigatórios (nickname, CPF, email e senha). Chegará uma mensagem no email preenchido para a validação da conta.
+
+2. **Personalização do Perfil**  
+   - Após o login, acesse seu perfil para personalizar sua bio, localização e avatar.  
+   - Clique no botão "Editar Perfil" para fazer alterações.
+
+3. **Postagens**  
+   - Na tela inicial, você pode criar postagens clicando no botão de adicionar.  
+   - Visualize as postagens de outros usuários no feed.
+
+4. **Pesquisa de Usuários (em desenvolvimento)**  
+   - Use a barra de pesquisa para encontrar outros usuários pelo nickname.  
+   - Clique no resultado para visualizar o perfil do usuário.
+
+---
+
 ## 👨‍💻 Autor
 
 Desenvolvido por [Lucas Giazzi](https://github.com/LucasGiazzi)  
