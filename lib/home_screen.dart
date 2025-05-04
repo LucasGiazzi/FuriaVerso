@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'auth_service.dart';
 import 'login.dart';
-import 'settings_page.dart';
+import 'search_page.dart'; // Importa a página de pesquisa
 import 'profile_page.dart';
 import 'package:intl/intl.dart'; // Para formatar data e hora
 
@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Lista de páginas para navegação
   final List<Widget> _pages = [
-    const SettingsPage(), // Página de configurações
+    const SearchPage(), // Página de pesquisa
     const HomeScreenContent(), // Conteúdo da Home
     const ProfilePage(), // Página de perfil
   ];
@@ -114,7 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text('FuriaVerso'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -154,8 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Configurações',
+            icon: Icon(Icons.search), // Substitui o botão de configurações
+            label: 'Pesquisar', // Botão de pesquisa
           ),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),

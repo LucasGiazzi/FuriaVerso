@@ -356,6 +356,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
               // Divider
               const Divider(color: Colors.grey),
+              const SizedBox(height: 16),
+              const Text(
+                "últimos posts - em desenvolvimento",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
