@@ -343,7 +343,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           'level': 1,
                           'location': 'Mundo Furioso',
                           'bio': 'Olá! Estou usando o FuriaVerso.',
-                          'profileImageUrl': 'assets/images/furico.png',
+                          'profileImageUrl': 'assets/images/furico1.png',
                         });
 
                         // Envia o e-mail de verificação
