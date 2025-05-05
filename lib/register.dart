@@ -32,38 +32,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  Future<bool> _isNicknameUnique(String nickname) async {
-    try {
-      final firestore = FirebaseFirestore.instance;
-      final querySnapshot =
-          await firestore
-              .collection('users')
-              .where('nickname', isEqualTo: nickname)
-              .limit(1)
-              .get();
-      return querySnapshot.docs.isEmpty;
-    } catch (e) {
-      print('Erro ao verificar unicidade do nickname: $e');
-      return false;
-    }
-  }
-
-  Future<bool> _isCpfUnique(String cpf) async {
-    try {
-      final firestore = FirebaseFirestore.instance;
-      final querySnapshot =
-          await firestore
-              .collection('users')
-              .where('cpf', isEqualTo: cpf)
-              .limit(1)
-              .get();
-      return querySnapshot.docs.isEmpty;
-    } catch (e) {
-      print('Erro ao verificar unicidade do CPF: $e');
-      return false;
-    }
-  }
-
   Future<void> _sendEmailVerification(User user) async {
     try {
       await user.sendEmailVerification();
@@ -89,7 +57,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    final firestore = FirebaseFirestore.instance;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -297,74 +264,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      final isNicknameUnique = await _isNicknameUnique(
-                        _nicknameController.text.trim(),
-                      );
-
-                      if (!isNicknameUnique) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('O nickname já está em uso.'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-
-                      final isCpfUnique = await _isCpfUnique(
-                        _cpfController.text.trim(),
-                      );
-
-                      if (!isCpfUnique) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('O CPF já está cadastrado.'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-
                       try {
                         final userCredential = await authService.register(
                           _emailController.text.trim(),
                           _passwordController.text.trim(),
                         );
 
-                        final userId = userCredential.user?.uid;
-                        if (userId == null) {
-                          throw Exception('Erro ao obter o ID do usuário.');
-                        }
-
-                        await firestore.collection('users').doc(userId).set({
-                          'nickname': _nicknameController.text.trim(),
-                          'email': _emailController.text.trim(),
-                          'cpf': _cpfController.text.trim(),
-                          'level': 1,
-                          'location': 'Mundo Furioso',
-                          'bio': 'Olá! Estou usando o FuriaVerso.',
-                          'profileImageUrl': 'assets/images/furico1.png',
-                        });
-
-                        // Envia o e-mail de verificação
                         final user = userCredential.user;
-                        if (user != null && !user.emailVerified) {
-                          await _sendEmailVerification(user);
+                        if (user != null) {
+                          // Salvar dados no Firestore
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .set({
+                                'nickname': _nicknameController.text.trim(),
+                                'email': _emailController.text.trim(),
+                                'cpf': _cpfController.text.trim(),
+                                'createdAt': FieldValue.serverTimestamp(),
+                              });
+
+                          // Enviar e-mail de verificação
+                          if (!user.emailVerified) {
+                            await _sendEmailVerification(user);
+                          }
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Conta cadastrada com sucesso! Verifique seu e-mail.',
+                              ),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                          );
                         }
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Conta cadastrada com sucesso!'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ),
-                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
